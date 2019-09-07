@@ -22,7 +22,7 @@ Simply configure your repository with MiniCD to allow it to get your code:
 
 ```bash
 kubectl create configmap my-simple-repository \
-  --namespace=minicd \
+	--namespace=minicd \
 	--from-literal=git.url=git://github.com:myrepository.git \
 	--from-file=git.rsa.pem=~/.ssh/rsa.pem
 ```
