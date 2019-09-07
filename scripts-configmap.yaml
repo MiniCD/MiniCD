@@ -1,0 +1,18 @@
+---
+# Source: k8s-webhook/templates/scripts-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "scripts-configmap"
+data:
+  github-webhook.sh: |-
+    #!/bin/bash
+    export EVENT_TYPE=$1 COMMIT_HASH=$2 HTTP_URL=$3 SSH_URL=$4
+    kubectl version && helm gtversion
+    echo "$EVENT_TYPE, $COMMIT_HASH, $HTTP_URL, $SSH_URL"   
+
+  gitlab-webhook.sh: |-
+    #!/bin/bash
+    export EVENT_TYPE=$1 COMMIT_HASH=$2 HTTP_URL=$3 SSH_URL=$4
+    kubectl version && helm gtversion
+    echo "$EVENT_TYPE, $COMMIT_HASH, $HTTP_URL, $SSH_URL"
