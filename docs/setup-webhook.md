@@ -1,0 +1,3 @@
+- For Github: https://developer.github.com/webhooks/creating/
+- For GitLab: ...
+- etc.
