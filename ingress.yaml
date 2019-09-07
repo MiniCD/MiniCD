@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: minicd
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: minicd.fabijanbajo.com
+    http:
+      paths:
+        - path: /
+          backend:
+            serviceName: minicd
+            servicePort: 80
