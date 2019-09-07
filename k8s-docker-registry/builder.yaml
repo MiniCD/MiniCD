@@ -18,21 +18,33 @@ spec:
       volumes:
       - name: cert-dir
         emptyDir: {}
+      - name: host-docker-dir
+        hostPath:
+          path: /etc/docker
+          type: Directory
+      - name: host-certs-dir
+        hostPath:
+          path: /etc/docker/certs.d
+          type: Directory
       initContainers:
       - name: download-cert
         image: alpine
-        command: ["/bin/ash", "-c", "apk add curl; curl image-registry:8080/domain.crt > /certs/domain.crt"]
+        command: ["/bin/ash", "-c", "mkdir -p /host/docker/certs.d/image-registry:443; apk add curl; curl image-registry:8080/domain.crt > /host/certs.d/image-registry:443/ca.crt; cp -r /host/certs.d/image-registry:443 /host/certs.d/localhost:31443"]
         volumeMounts:
         - mountPath: /certs
           name: cert-dir
+        - name: host-docker-dir
+          mountPath: "/host"
+        securityContext:
+          privileged: true
       containers:
       - name: poc
         image: docker:dind
         securityContext:
           privileged: true
         volumeMounts:
-        - mountPath: "/etc/docker/certs.d/image-registry"
-          name: cert-dir
+        - name: host-certs-dir
+          mountPath: "/etc/docker/certs.d"
 ---
 
 apiVersion: v1

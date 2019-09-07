@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dummy
+  labels:
+    app: minicd
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: dummy
+  template:
+    metadata:
+      labels:
+        app: dummy
+    spec:
+      containers:
+      - name: dummy
+        image: localhost:31443/alpine
+        command: ["sh", "-c", "sleep 10000"]

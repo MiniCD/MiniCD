@@ -47,8 +47,6 @@ spec:
           requests:
             cpu: 50m
             memory: 100Mi
-        securityContext:
-          privileged: true
         env:
         - name: REGISTRY_HTTP_ADDR
           value: 0.0.0.0:443
@@ -87,3 +85,20 @@ spec:
       protocol: TCP
       port: 8080
       targetPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: image-registry-np
+  labels:
+    app: minicd
+spec:
+  selector:
+    app: image-registry
+  type: NodePort
+  ports:
+    - name: http
+      protocol: TCP
+      port: 31443
+      targetPort: 443
