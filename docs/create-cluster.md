@@ -7,3 +7,9 @@ Pick a provider:
 - [AKS](https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough)
 - [IKS](https://cloud.ibm.com/docs/containers?topic=containers-getting-started)
 - or pick another: https://kubernetes.io/docs/setup/
+
+### GCE Quickstart
+
+```bash
+gcloud container clusters get-credentials minicd-test --project minicd --zone europe-west4-c
+```

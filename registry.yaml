@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-registry
+  labels:
+    app: minicd
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: image-registry
+  template:
+    metadata:
+      labels:
+        app: image-registry
+    spec:
+      volumes:
+      - name: cert-dir
+        emptyDir: {}
+      - name: pub-dir
+        emptyDir: {}
+      initContainers:
+      - name: generate-certs
+        image: alpine
+        command: ["/bin/ash", "-c", "apk add openssl; openssl req -newkey rsa:4096 -nodes -sha256 -subj '/CN=image-registry' -keyout /certs/domain.key -x509 -out /certs-pub/domain.crt"]
+        resources:
+          requests:
+            cpu: 50m
+            memory: 100Mi
+        volumeMounts:
+        - mountPath: /certs
+          name: cert-dir
+        - mountPath: /certs-pub
+          name: pub-dir
+      containers:
+      - name: cert-server
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: pub-dir
+      - name: image-registry
+        image: registry:2
+        resources:
+          requests:
+            cpu: 50m
+            memory: 100Mi
+        securityContext:
+          privileged: true
+        env:
+        - name: REGISTRY_HTTP_ADDR
+          value: 0.0.0.0:443
+        - name: REGISTRY_HTTP_TLS_CERTIFICATE
+          value: /certs-pub/domain.crt
+        - name: REGISTRY_HTTP_TLS_KEY
+          value: /certs/domain.key
+        ports:
+        - containerPort: 5000
+        - containerPort: 443
+        volumeMounts:
+        - mountPath: /certs
+          name: cert-dir
+        - mountPath: /certs-pub
+          name: pub-dir
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: image-registry
+  labels:
+    app: minicd
+spec:
+  selector:
+    app: image-registry
+  ports:
+    - name: http
+      protocol: TCP
+      port: 5000
+      targetPort: 5000
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: 443
+    - name: http-cert
+      protocol: TCP
+      port: 8080
+      targetPort: 80

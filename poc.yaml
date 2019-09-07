@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: poc
+  labels:
+    app: minicd
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: poc
+  template:
+    metadata:
+      labels:
+        app: poc
+    spec:
+      volumes:
+      - name: cert-dir
+        emptyDir: {}
+      initContainers:
+      - name: download-cert
+        image: alpine
+        command: ["/bin/ash", "-c", "apk add curl; curl image-registry:8080/domain.crt > /certs/domain.crt"]
+        volumeMounts:
+        - mountPath: /certs
+          name: cert-dir
+      containers:
+      - name: poc
+        image: docker:dind
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: "/etc/docker/certs.d/image-registry"
+          name: cert-dir
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: poc
+  labels:
+    app: minicd
+spec:
+  selector:
+    app: poc
+  ports:
+    - name: http
+      protocol: TCP
+      port: 5000
+      targetPort: 5000
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: 443
