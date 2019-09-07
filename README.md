@@ -2,8 +2,8 @@
 The simplest k8s CI/CD system you'll ever find.
 
 1. [Get a cluster](./docs/create-cluster.md).
-2. Install MiniCD: `kubectl apply -f ./`.
-3. Configure MiniCD (see below): `kubectl create configmap ...`
+2. Install MiniCD: `kubectl apply -f https://raw.githubusercontent.com/MiniCD/MiniCD/master/minicd.yaml`.
+3. Configure MiniCD (see below): `kubectl create configmap [options]`
 3. [Setup the WebHook](docs/setup-webhook.md) in a git provider of your choice: GitHub/GitLab/etc.
 4. Profit! 🍺
 
@@ -16,6 +16,10 @@ MiniCD works with many different repositories. For example:
 
 ### Configuration
 Simply configure your repository with MiniCD to allow it to get your code:
+
 ```bash
-kubectl create configmap my-simple-repository --namespace=minicd --from-literal=git.url=git://github.com:myrepository.git --from-file=git.rsa.pem=~/.ssh/rsa.pem
+kubectl create configmap my-simple-repository \
+  --namespace=minicd \
+	--from-literal=git.url=git://github.com:myrepository.git \
+	--from-file=git.rsa.pem=~/.ssh/rsa.pem
 ```
