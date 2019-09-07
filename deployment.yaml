@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: minicd
-        image: "fabijanbajo/minicd:0.1.0"
+        image: "fabijanbajo/minicd"
         imagePullPolicy: Always
         args:
         - "-verbose"
@@ -48,9 +48,6 @@ spec:
         - name: webhook-configmap
           mountPath: /emptydir-volume/git-webhook.yaml
           subPath: git-webhook.yaml
-        # - name: pipeline-configmap
-        #   mountPath: /emptydir-volume/pipeline-job.yaml
-        #   subPath: pipeline-job.yaml
       initContainers:
       - name: initialize-scripts
         image: busybox:latest
@@ -73,6 +70,3 @@ spec:
       - name: scripts-configmap
         configMap:
           name: "scripts-configmap"
-      - name: pipeline-configmap
-        configMap:
-          name: "pipeline-configmap"

@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: "release-name-git-webhook-configmap"
+  name: "git-webhook-configmap"
 data:
   git-webhook.yaml: |-
     ---
